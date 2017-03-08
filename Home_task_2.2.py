@@ -1,38 +1,20 @@
 import json
-# import cchardet as chardet      #cchardet=chardet, but cchardet work faster than chardet
-import os
+import xml.etree.ElementTree as ET
 import string
 from pprint import pprint
 
-list_files = [
+list_files_json = [
     ('newsafr.json', 'utf-8'),
     ('newscy.json', 'koi8-r'),
     ('newsfr.json', 'iso-8859-5'),
     ('newsit.json', 'cp1251')
 ]
 
-# def check_encoding(fname):
-#     rawdata = open(fname, "rb").read()
-#     result = chardet.detect(rawdata)['encoding']
-#     return result.lower()
-#
-# def get_file_list(our_directory, file_extension):
-#     list_files = []
-#     json_files = []
-#     xml_files = []
-#     for file in os.listdir(our_directory):
-#         file_name = file #os.path.join(our_directory, file)
-#         if file.endswith(file_extension):
-#             list_files.append((file_name, check_encoding(file_name)))
-#         # elif file.endswith(".xml"):
-#         #     xml_files.append((file_name, check_encoding(file_name)))
-#     pprint(list_files)
-#     print(list_files)
-#     return list_files
+list_files_xml = ['newsafr.xml', 'newscy.xml', 'newsfr.xml', 'newsit.xml']
 
-def get_frequency_dictionery(list_files, our_directory):
+def get_frequency_dictionery(list_files):
+    strip = string.whitespace + string.punctuation + string.digits + "\"'" + '<br>'
     for json_file, engoding_file in list_files:
-        strip = string.whitespace + string.punctuation + string.digits + "\"'" + '<br>'
         with open(json_file, 'r', encoding=engoding_file) as f:
             data = json.load(f)
             words = {}
@@ -48,6 +30,29 @@ def get_frequency_dictionery(list_files, our_directory):
                         words[word] = words.get(word, 0) + 1
         print_frequency_dictionery(json_file,words)
 
+def get_frequency_dictionery_xml(list_files_xml):
+    print(list_files_xml)
+    print(list_files_xml[0])
+    print(type(list_files_xml[0]))
+    f = 'newsfr.xml'
+    print(type(f))
+    n = list_files_xml[0]
+    print(type(n))
+
+    tree = ET.parse(f)
+    tree = ET.parse(n) # неработает передача названия документа, как элемента списка. Почему?
+    print(tree)
+    for i in tree.iter():
+        print(i)
+    # print(list_files_xml)
+    # for xml_file in list_files_xml:
+    #     print(xml_file)
+    #     tree = ET.parse('newsafr.xml')
+        # tree = ET.parse(xml_file) #строка выдает ошибку, так и не смог понять почему?(
+        # print(tree)
+        # for i in tree.iter():
+        #     print(i)
+
 def print_frequency_dictionery(json_file,words):
     i = 0
     print('----------------{}----------------------'.format(json_file))
@@ -58,8 +63,5 @@ def print_frequency_dictionery(json_file,words):
             break
 
 if __name__ == "__main__":
-    our_directory = input("Enter directory's name(if directory's name is empty,"
-                          "the current working directory will be assigned):")
-    if not our_directory:
-        our_directory = os.getcwd()  # the current working directory: "...Home_task_2.2"
-    get_frequency_dictionery(list_files, our_directory)
+    # get_frequency_dictionery(list_files_json)
+    get_frequency_dictionery_xml(list_files_xml)
